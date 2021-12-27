@@ -1,17 +1,31 @@
-version: '3.3'
+version: '3.8'
 services:
   db:
     container_name: pets_db
     image: library/postgres:${POSTGRES_VERSION}
-
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_DB=pets
       - PGDATA=/var/lib/postgresql/data/pets
     ports:
-      - 5433:5432
-
+      - "5433:5432"
+  sonarqube:
+      container_name: sonarqube
+      image: sonarqube:8-community
+      depends_on:
+        - db
+      environment:
+        - SONAR_JDBC_URL=jdbc:postgresql://db:5432/pets
+        - SONAR_JDBC_USERNAME=${POSTGRES_USER}
+        - SONAR_JDBC_PASSWORD=${POSTGRES_PASSWORD}
+      volumes:
+        - /tmp/opt/sonarqube/conf:/opt/sonarqube/conf
+        - /tmp/opt/sonarqube/logs:/opt/sonarqube/data
+        - /tmp/opt/sonarqube/data:/opt/sonarqube/logs
+        - /tmp/opt/sonarqube/extensions:/opt/sonarqube/extensions
+      ports:
+        - "9000:9000"
   test_db:
     container_name: test_pets_db
     image: library/postgres:${POSTGRES_VERSION}
@@ -22,4 +36,9 @@ services:
       - POSTGRES_DB=test_pets
       - PGDATA=/var/lib/postgresql/data/test_pets
     ports:
-    - 5434:5432
+    - "5434:5432"
+  jenkins:
+    container_name: jenkins
+    image: jenkins/jenkins:lts
+    ports:
+      - "8080:8080"

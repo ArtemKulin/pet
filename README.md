@@ -53,7 +53,7 @@ Don't write boilerplate code. Use [Lombok](https://javarush.ru/groups/posts/2753
 
 # Swagger Guide
 ### Interact with our APIs using browser
-http://localhost:8080/swagger-ui.html
+http://localhost:8060/swagger-ui.html
 
 ### Generate API documentation based on annotations
 Quick and easy way to document your APIs.
