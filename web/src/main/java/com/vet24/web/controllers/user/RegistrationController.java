@@ -68,9 +68,10 @@ public class RegistrationController {
     })
 
     @PostMapping("/api/registration")
-    public ResponseEntity<Void> register(@Valid @RequestBody RegisterDto
-                                                     inputDto, Errors errors,
-                                         HttpServletRequest request)throws IOException, MessagingException {
+    public ResponseEntity<Void> register(@Valid @RequestBody RegisterDto inputDto,
+                                         Errors errors,
+                                         HttpServletRequest request
+    ) throws IOException, MessagingException {
         if (errors.hasErrors()) {
             String mesBuild = errors.getAllErrors().stream()
                     .map(ObjectError::getDefaultMessage).collect(Collectors.joining(";"));

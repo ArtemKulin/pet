@@ -10,9 +10,9 @@ import java.nio.charset.StandardCharsets;
 public class TemplateConfig {
 
     @Bean
-    public SpringTemplateEngine springTemplateEngine() {
+    public SpringTemplateEngine springTemplateEngine(SpringResourceTemplateResolver htmlTemplateResolver) {
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();
-        templateEngine.addTemplateResolver(htmlTemplateResolver());
+        templateEngine.addTemplateResolver(htmlTemplateResolver);
         return templateEngine;
     }
     @Bean
