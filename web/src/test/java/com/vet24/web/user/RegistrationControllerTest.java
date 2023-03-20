@@ -6,19 +6,19 @@ import com.github.database.rider.spring.api.DBRider;
 import com.vet24.models.dto.user.RegisterDto;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @Slf4j
 @DBRider
-@Ignore
 public class RegistrationControllerTest extends ControllerAbstractIntegrationTest {
 
     final String URI = "http://localhost:8090/api/registration";
@@ -26,7 +26,7 @@ public class RegistrationControllerTest extends ControllerAbstractIntegrationTes
     private final HttpHeaders headers = new HttpHeaders();
     private HttpEntity<RegisterDto> entity;
 
-    @Before
+    @BeforeEach
     public void createNewRegisterDto() {
         RegisterDto registerDto = new RegisterDto("342354234.com", "Vera", "P",
                 "Congo", "Congo");
@@ -38,7 +38,7 @@ public class RegistrationControllerTest extends ControllerAbstractIntegrationTes
     public void shouldBeNotAcceptableWrongEmail() {
         ResponseEntity<RegisterDto> responseEntity = testRestTemplate
                 .exchange(URI, HttpMethod.POST, entity, RegisterDto.class);
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
     }
 
     @Test
@@ -46,7 +46,7 @@ public class RegistrationControllerTest extends ControllerAbstractIntegrationTes
     public void shouldBeNotAcceptablePasswords(){
         ResponseEntity<RegisterDto> responseEntity = testRestTemplate
                 .exchange(URI, HttpMethod.POST, entity, RegisterDto.class);
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
     }
 
     @Test
@@ -56,6 +56,6 @@ public class RegistrationControllerTest extends ControllerAbstractIntegrationTes
         entity = new HttpEntity<>(rightDto);
         ResponseEntity<RegisterDto> responseEntity = testRestTemplate
                 .exchange(URI, HttpMethod.POST, entity, RegisterDto.class);
-        Assert.assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
     }
 }

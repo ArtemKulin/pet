@@ -10,13 +10,14 @@ import com.vet24.models.mappers.pet.reproduction.ReproductionMapper;
 import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import com.vet24.web.controllers.pet.reproduction.ReproductionController;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 
 import java.time.LocalDate;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @DBRider
 public class ReproductionControllerTest extends ControllerAbstractIntegrationTest {
@@ -41,7 +42,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     //        `---> pet 3 --> reproduction 3 (to get & update & delete)
     //                  `---> reproduction 4 (to create)
 
-    @Before
+    @BeforeEach
     public void createNewReproductionAndReproductionDto() {
         this.reproductionDtoNew = new ReproductionDto(4L, LocalDate.now(), LocalDate.now(), LocalDate.now(), 4);
         this.reproductionDto1 = new ReproductionDto(100L, LocalDate.now(), LocalDate.now(), LocalDate.now(), 11);
@@ -56,8 +57,8 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
         ResponseEntity<ReproductionDto> response = testRestTemplate
                 .getForEntity(URI + "/{petId}/reproduction/{id}", ReproductionDto.class, 102, 102);
 
-        Assert.assertEquals(dtoFromDao, response.getBody());
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(dtoFromDao, response.getBody());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     // get reproduction by id -  error 404 pet not found
@@ -66,8 +67,8 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testGetReproductionError404pet() {
         ResponseEntity<ExceptionDto> response = testRestTemplate
                 .getForEntity(URI + "/{petId}/reproduction/{id}", ExceptionDto.class, 33, 102);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not found"));
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals(response.getBody(), new ExceptionDto("pet not found"));
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     // get reproduction by id -  error 404 reproduction not found
@@ -76,8 +77,8 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testGetReproductionError404reproduction() {
         ResponseEntity<ExceptionDto> response = testRestTemplate
                 .getForEntity(URI + "/{petId}/reproduction/{id}", ExceptionDto.class, 102, 33);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("reproduction not found"));
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals(response.getBody(), new ExceptionDto("reproduction not found"));
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     // get reproduction by id -  error 400 reproduction not assigned to pet
@@ -86,8 +87,8 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testGetReproductionError400refPetReproduction() {
         ResponseEntity<ExceptionDto> response = testRestTemplate
                 .getForEntity(URI + "/{petId}/reproduction/{id}", ExceptionDto.class, 101, 102);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("reproduction not assigned to this pet"));
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(response.getBody(), new ExceptionDto("reproduction not assigned to this pet"));
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     // get reproduction by id -  error 400 pet not yours
@@ -96,8 +97,8 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testGetReproductionError400refClientPet() {
         ResponseEntity<ExceptionDto> response = testRestTemplate
                 .getForEntity(URI + "/{petId}/reproduction/{id}", ExceptionDto.class, 100, 100);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     // add reproduction - success
@@ -111,9 +112,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
         int afterCount = reproductionDao.getAll().size();
 
         reproductionDtoNew.setId(response.getBody().getId());
-        Assert.assertEquals(++beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), reproductionDtoNew);
-        Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(++beforeCount, afterCount);
+        assertEquals(response.getBody(), reproductionDtoNew);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
     // add reproduction - error 404 pet not found
@@ -126,9 +127,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
                 .postForEntity(URI + "/{petId}/reproduction", request, ExceptionDto.class, 33);
         int afterCount = reproductionDao.getAll().size();
 
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not found"));
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals(beforeCount, afterCount);
+        assertEquals(response.getBody(), new ExceptionDto("pet not found"));
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     // add reproduction - error 400 pet not yours
@@ -141,9 +142,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
                 .postForEntity(URI + "/{petId}/reproduction", request, ExceptionDto.class, 100);
         int afterCount = reproductionDao.getAll().size();
 
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(beforeCount, afterCount);
+        assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     // put reproduction by id - success
@@ -156,9 +157,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
                 .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, ReproductionDto.class, 102, 102);
         int afterCount = reproductionDao.getAll().size();
 
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(reproductionDto3, response.getBody());
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(beforeCount, afterCount);
+        assertEquals(reproductionDto3, response.getBody());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     // put reproduction by id - error 404 pet not found
@@ -171,9 +172,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
                 .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, ExceptionDto.class, 33, 102);
         int afterCount = reproductionDao.getAll().size();
 
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not found"));
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals(response.getBody(), new ExceptionDto("pet not found"));
+        assertEquals(beforeCount, afterCount);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     // put reproduction by id - error 404 reproduction not found
@@ -186,9 +187,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
                 .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, ExceptionDto.class, 102, 33);
         int afterCount = reproductionDao.getAll().size();
 
-        Assert.assertEquals(response.getBody(), new ExceptionDto("reproduction not found"));
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals(response.getBody(), new ExceptionDto("reproduction not found"));
+        assertEquals(beforeCount, afterCount);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     // put reproduction by id - error 400 reproduction not assigned to pet
@@ -201,9 +202,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
                 .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, ExceptionDto.class, 101, 102);
         int afterCount = reproductionDao.getAll().size();
 
-        Assert.assertEquals(response.getBody(), new ExceptionDto("reproduction not assigned to this pet"));
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(response.getBody(), new ExceptionDto("reproduction not assigned to this pet"));
+        assertEquals(beforeCount, afterCount);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     // put reproduction by id - error 400 reproductionId in path and in body not equals
@@ -216,9 +217,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
                 .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, ExceptionDto.class, 102, 102);
         int afterCount = reproductionDao.getAll().size();
 
-        Assert.assertEquals(response.getBody(), new ExceptionDto("reproductionId in path and in body not equals"));
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(response.getBody(), new ExceptionDto("reproductionId in path and in body not equals"));
+        assertEquals(beforeCount, afterCount);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     // put reproduction by id - error 400 pet not yours
@@ -231,9 +232,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
                 .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, ExceptionDto.class, 100, 100);
         int afterCount = reproductionDao.getAll().size();
 
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
+        assertEquals(beforeCount, afterCount);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     // delete reproduction by id - success
@@ -247,9 +248,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
         int afterCount = reproductionDao.getAll().size();
         Reproduction afterReproduction = reproductionDao.getByKey(102L);
 
-        Assert.assertNull(afterReproduction);
-        Assert.assertEquals(--beforeCount, afterCount);
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNull(afterReproduction);
+        assertEquals(--beforeCount, afterCount);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     // delete reproduction by id - error 404 pet not found
@@ -263,10 +264,10 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
         int afterCount = reproductionDao.getAll().size();
         Reproduction afterReproduction = reproductionDao.getByKey(101L);
 
-        Assert.assertNotNull(afterReproduction);
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not found"));
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNotNull(afterReproduction);
+        assertEquals(beforeCount, afterCount);
+        assertEquals(response.getBody(), new ExceptionDto("pet not found"));
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     // delete reproduction by id - error 404 reproduction not found
@@ -279,9 +280,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
                 .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.DELETE, request, ExceptionDto.class, 102, 33);
         int afterCount = reproductionDao.getAll().size();
 
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("reproduction not found"));
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals(beforeCount, afterCount);
+        assertEquals(response.getBody(), new ExceptionDto("reproduction not found"));
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     // delete reproduction by id - error reproduction not assigned to pet
@@ -295,10 +296,10 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
         int afterCount = reproductionDao.getAll().size();
         Reproduction afterReproduction = reproductionDao.getByKey(102L);
 
-        Assert.assertNotNull(afterReproduction);
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("reproduction not assigned to this pet"));
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(afterReproduction);
+        assertEquals(beforeCount, afterCount);
+        assertEquals(response.getBody(), new ExceptionDto("reproduction not assigned to this pet"));
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     // delete reproduction by id - error pet not yours
@@ -312,9 +313,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
         int afterCount = reproductionDao.getAll().size();
         Reproduction afterReproduction = reproductionDao.getByKey(100L);
 
-        Assert.assertNotNull(afterReproduction);
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(afterReproduction);
+        assertEquals(beforeCount, afterCount);
+        assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 }

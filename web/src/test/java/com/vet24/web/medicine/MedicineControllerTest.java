@@ -8,11 +8,15 @@ import com.vet24.models.mappers.medicine.MedicineMapper;
 import com.vet24.models.medicine.Medicine;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import com.vet24.web.controllers.medicine.MedicineController;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -20,6 +24,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DBRider
 public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
@@ -35,7 +40,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
     private Medicine medicine;
     private MedicineDto medicineDto;
 
-    @Before
+    @BeforeEach
     public void createNewMedicineAndMedicineDto() {
         medicine = new Medicine("daulet", "jm", "dsad", "test");
         medicine.setId(1L);
@@ -57,7 +62,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
                 .getForEntity(URI + "/{id}", MedicineDto.class, 100);
 
         assertThat(medicine).isNotNull();
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     //add medicine
@@ -74,8 +79,8 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
                 .postForEntity(URI, request, MedicineDto.class);
         List<Medicine> medicineList = medicineDao.getAll();
         int resultRow = medicineList.size();
-        Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        Assert.assertEquals(++countRow, resultRow);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(++countRow, resultRow);
     }
 
     //put medicine by id
@@ -88,8 +93,8 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
                 .exchange(URI + "/{id}", HttpMethod.PUT, entity, MedicineDto.class, 101);
         Medicine updateMedicine = medicineDao.getByKey(101L);
         medicine.setId(101L);
-        Assert.assertEquals(medicine, updateMedicine);
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(medicine, updateMedicine);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     //upload icon for medicine by id
@@ -103,7 +108,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
         HttpEntity<LinkedMultiValueMap<String, Object>> entity = new HttpEntity<>(parameters, headers);
         ResponseEntity<String> response = testRestTemplate
                 .exchange(URI + "/{id}/set-pic", HttpMethod.POST, entity, String.class, 100);
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     //get icon for medicine by id
@@ -113,7 +118,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
         shouldBeUpdateMedicineIcon();
         ResponseEntity<byte[]> response = testRestTemplate
                 .getForEntity(URI + "/{id}/set-pic", byte[].class, 100);
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     //delete medicine by id
@@ -127,8 +132,8 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
                 .exchange(URI + "/{id}", HttpMethod.DELETE, entity, Void.class, 100);
         List<Medicine> medicineListAfter = medicineDao.getAll();
         int resultRow = medicineListAfter.size();
-        Assert.assertEquals(--countRow, resultRow);
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(--countRow, resultRow);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     //test search medicine
@@ -145,6 +150,6 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
                 HttpMethod.GET,
                 entity,
                 String.class);
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 }

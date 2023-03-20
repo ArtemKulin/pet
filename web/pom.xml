@@ -27,18 +27,19 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>2.7.0</version>
+            <version>${spring.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/junit/junit -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>com.github.database-rider</groupId>
+            <artifactId>rider-spring</artifactId>
+            <version>${db.rider.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.github.database-rider</groupId>
-            <artifactId>rider-spring</artifactId>
-            <version>1.32.3</version>
+            <artifactId>rider-junit5</artifactId>
+            <version>${db.rider.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

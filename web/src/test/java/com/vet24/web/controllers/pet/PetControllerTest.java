@@ -11,9 +11,8 @@ import com.vet24.models.enums.PetSize;
 import com.vet24.models.enums.PetType;
 import com.vet24.models.pet.Pet;
 import com.vet24.web.ControllerAbstractIntegrationTest;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
@@ -25,6 +24,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 
 import java.time.LocalDate;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @DBRider
 public class PetControllerTest extends ControllerAbstractIntegrationTest {
@@ -39,7 +40,7 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
 
     private AbstractNewPetDto abstractNewPetDto;
 
-    @Before
+    @BeforeEach
     public void createNewClientAndDog() {
         this.abstractNewPetDto = new DogDto("name", PetType.DOG, LocalDate.now(), Gender.MALE, "breed",
                 "color", PetSize.MEDIUM, 9.3, "description", "test.png", 0);
@@ -54,8 +55,8 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
                 .postForEntity(URI + "/add", request, AbstractNewPetDto.class);
         int sizeAfter = petDao.getAll().size();
 
-        Assert.assertEquals(++sizeBefore, sizeAfter);
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(++sizeBefore, sizeAfter);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
@@ -68,9 +69,9 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
         int sizeAfter = petDao.getAll().size();
         Pet pet = petDao.getByKey(102L);
 
-        Assert.assertNull(pet);
-        Assert.assertEquals(--sizeBefore, sizeAfter);
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNull(pet);
+        assertEquals(--sizeBefore, sizeAfter);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
@@ -83,9 +84,9 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
         int sizeAfter = petDao.getAll().size();
         Pet pet = petDao.getByKey(100L);
 
-        Assert.assertNotNull(pet);
-        Assert.assertEquals(sizeBefore, sizeAfter);
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(pet);
+        assertEquals(sizeBefore, sizeAfter);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
@@ -98,9 +99,9 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
                 .exchange(URI + "/{petId}", HttpMethod.DELETE, new HttpEntity<>(headers), Void.class, 69000);
         int sizeAfter = petDao.getAll().size();
 
-        Assert.assertNull(petBefore);
-        Assert.assertEquals(sizeBefore, sizeAfter);
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNull(petBefore);
+        assertEquals(sizeBefore, sizeAfter);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
@@ -114,9 +115,9 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
         Pet petAfter = petDao.getByKey(102L);
         int sizeAfter = petDao.getAll().size();
 
-        Assert.assertEquals(sizeBefore, sizeAfter);
-        Assert.assertNotEquals(petBefore, petAfter);
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(sizeBefore, sizeAfter);
+        assertNotEquals(petBefore, petAfter);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
@@ -130,12 +131,12 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
         Pet petAfter = petDao.getByKey(100L);
         int sizeAfter = petDao.getAll().size();
 
-        Assert.assertEquals(sizeBefore, sizeAfter);
-        Assert.assertEquals(petBefore.getId(), petAfter.getId());
-        Assert.assertEquals(petBefore.getPetType(), petAfter.getPetType());
-        Assert.assertEquals(petBefore.getName(), petAfter.getName());
-        Assert.assertEquals(petBefore.getBirthDay(), petAfter.getBirthDay());
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(sizeBefore, sizeAfter);
+        assertEquals(petBefore.getId(), petAfter.getId());
+        assertEquals(petBefore.getPetType(), petAfter.getPetType());
+        assertEquals(petBefore.getName(), petAfter.getName());
+        assertEquals(petBefore.getBirthDay(), petAfter.getBirthDay());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
@@ -148,9 +149,9 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
                 .exchange(URI + "/{petId}", HttpMethod.PUT, request, PetDto.class, 69000);
         int sizeAfter = petDao.getAll().size();
 
-        Assert.assertNull(petBefore);
-        Assert.assertEquals(sizeBefore, sizeAfter);
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNull(petBefore);
+        assertEquals(sizeBefore, sizeAfter);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
@@ -160,7 +161,7 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
         ResponseEntity<byte[]> response = testRestTemplate
                 .getForEntity(URI + "/{petId}/avatar", byte[].class, 102);
 
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
@@ -170,8 +171,8 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
         ResponseEntity<byte[]> response = testRestTemplate
                 .getForEntity(URI + "/{petId}/avatar", byte[].class, 69000);
 
-        Assert.assertNull(pet);
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNull(pet);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
@@ -185,7 +186,7 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
         ResponseEntity<String> response = testRestTemplate
                 .exchange(URI + "/{petId}/avatar", HttpMethod.POST, entity, String.class, 102);
 
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
@@ -199,7 +200,7 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
         ResponseEntity<String> response = testRestTemplate
                 .exchange(URI + "/{petId}/avatar", HttpMethod.POST, entity, String.class, 100);
 
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
@@ -214,7 +215,7 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
         ResponseEntity<String> response = testRestTemplate
                 .exchange(URI + "/{petId}/avatar", HttpMethod.POST, entity, String.class, 69000);
 
-        Assert.assertNull(pet);
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNull(pet);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }

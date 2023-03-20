@@ -6,8 +6,7 @@ import com.vet24.models.dto.user.ClientDto;
 import com.vet24.models.mappers.user.ClientMapper;
 import com.vet24.service.user.ClientService;
 import com.vet24.web.ControllerAbstractIntegrationTest;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
@@ -19,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DBRider
 public class ClientControllerTest extends ControllerAbstractIntegrationTest {
@@ -42,8 +42,8 @@ public class ClientControllerTest extends ControllerAbstractIntegrationTest {
                 .getForEntity(URI, ClientDto.class);
 
         assertThat(clientDto).isNotNull();
-        Assert.assertEquals(clientDto, response.getBody());
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(clientDto, response.getBody());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
@@ -53,7 +53,7 @@ public class ClientControllerTest extends ControllerAbstractIntegrationTest {
         ResponseEntity<byte[]> response = testRestTemplate
                 .getForEntity(URI + "/avatar", byte[].class);
 
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
@@ -67,6 +67,6 @@ public class ClientControllerTest extends ControllerAbstractIntegrationTest {
         ResponseEntity<String> response = testRestTemplate
                 .exchange(URI + "/avatar", HttpMethod.POST, entity, String.class, 3);
 
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 }

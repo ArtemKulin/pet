@@ -12,9 +12,8 @@ import com.vet24.models.mappers.pet.procedure.ProcedureMapper;
 import com.vet24.models.pet.procedure.Procedure;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import com.vet24.web.controllers.pet.procedure.ProcedureController;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -23,6 +22,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @DBRider
@@ -48,7 +49,7 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     //        `---> pet 3 --> procedure 3 (to get & update & delete)
     //                  `---> procedure 4 (to create)
 
-    @Before
+    @BeforeEach
     public void createModels() {
         this.newProcedureDto = new VaccinationDto(LocalDate.now(), 100L, "4f435", false, null);
         this.procedureDto1 = new ProcedureDto(100L, LocalDate.now(), ProcedureType.EXTERNAL_PARASITE,
@@ -66,8 +67,8 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
         ResponseEntity<ProcedureDto> response = testRestTemplate
                 .getForEntity(URI + "/{petId}/procedure/{procedureId}", ProcedureDto.class, 102, 102);
 
-        Assert.assertEquals(response.getBody(), procedureDtoFromDao);
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.OK);
+        assertEquals(response.getBody(), procedureDtoFromDao);
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
     }
 
     // GET procedure by id - 404 ERROR "pet not found"
@@ -77,8 +78,8 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
         ResponseEntity<ExceptionDto> response = testRestTemplate
                 .getForEntity(URI + "/{petId}/procedure/{procedureId}", ExceptionDto.class, 33, 102);
 
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not found"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
+        assertEquals(response.getBody(), new ExceptionDto("pet not found"));
+        assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
     }
 
     // GET procedure by id - 404 ERROR "procedure not found"
@@ -88,8 +89,8 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
         ResponseEntity<ExceptionDto> response = testRestTemplate
                 .getForEntity(URI + "/{petId}/procedure/{procedureId}", ExceptionDto.class, 102, 33);
 
-        Assert.assertEquals(response.getBody(), new ExceptionDto("procedure not found"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
+        assertEquals(response.getBody(), new ExceptionDto("procedure not found"));
+        assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
     }
 
     // GET procedure by id - 400 ERROR "pet not yours"
@@ -99,8 +100,8 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
         ResponseEntity<ExceptionDto> response = testRestTemplate
                 .getForEntity(URI + "/{petId}/procedure/{procedureId}", ExceptionDto.class, 100, 100);
 
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
     }
 
     // GET procedure by id - 400 ERROR "pet not assigned to this procedure"
@@ -110,8 +111,8 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
         ResponseEntity<ExceptionDto> response = testRestTemplate
                 .getForEntity(URI + "/{petId}/procedure/{procedureId}", ExceptionDto.class, 101, 102);
 
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not assigned to this procedure"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        assertEquals(response.getBody(), new ExceptionDto("pet not assigned to this procedure"));
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
     }
 
     // ADD new procedure - 201 SUCCESS
@@ -124,8 +125,8 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
                 .postForEntity(URI + "/{petId}/procedure", request, ProcedureDto.class, 102);
         int afterCount = procedureDao.getAll().size();
 
-        Assert.assertEquals(++beforeCount, afterCount);
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.CREATED);
+        assertEquals(++beforeCount, afterCount);
+        assertEquals(response.getStatusCode(), HttpStatus.CREATED);
     }
 
     // ADD new procedure - 404 ERROR "pet not found"
@@ -138,9 +139,9 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
                 .postForEntity(URI + "/{petId}/procedure", request, ExceptionDto.class, 33);
         int afterCount = procedureDao.getAll().size();
 
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not found"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
+        assertEquals(beforeCount, afterCount);
+        assertEquals(response.getBody(), new ExceptionDto("pet not found"));
+        assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
     }
 
     // ADD new procedure - 400 ERROR "pet not yours"
@@ -153,9 +154,9 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
                 .postForEntity(URI + "/{petId}/procedure", request, ExceptionDto.class, 100);
         int afterCount = procedureDao.getAll().size();
 
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        assertEquals(beforeCount, afterCount);
+        assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
     }
 
     // UPDATE  procedure - 200 SUCCESS
@@ -169,10 +170,10 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
                 .exchange(URI + "/{petId}/procedure/{procedureId}", HttpMethod.PUT, request, ProcedureDto.class, 102, 102);
         int afterCount = procedureDao.getAll().size();
 
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), procedureDto3);
-        Assert.assertNotEquals(response.getBody(), procedureDtoBefore);
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.OK);
+        assertEquals(beforeCount, afterCount);
+        assertEquals(response.getBody(), procedureDto3);
+        assertNotEquals(response.getBody(), procedureDtoBefore);
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
     }
 
     // UPDATE  procedure - 404 ERROR "pet not found"
@@ -185,9 +186,9 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
                 .exchange(URI + "/{petId}/procedure/{procedureId}", HttpMethod.PUT, request, ExceptionDto.class, 33, 102);
         int afterCount = procedureDao.getAll().size();
 
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not found"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
+        assertEquals(beforeCount, afterCount);
+        assertEquals(response.getBody(), new ExceptionDto("pet not found"));
+        assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
     }
 
     // UPDATE  procedure - 404 ERROR "procedure not found"
@@ -200,9 +201,9 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
                 .exchange(URI + "/{petId}/procedure/{procedureId}", HttpMethod.PUT, request, ExceptionDto.class, 102, 33);
         int afterCount = procedureDao.getAll().size();
 
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("procedure not found"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
+        assertEquals(beforeCount, afterCount);
+        assertEquals(response.getBody(), new ExceptionDto("procedure not found"));
+        assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
     }
 
     // UPDATE  procedure - 400 ERROR "pet not yours"
@@ -215,9 +216,9 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
                 .exchange(URI + "/{petId}/procedure/{procedureId}", HttpMethod.PUT, request, ExceptionDto.class, 100, 100);
         int afterCount = procedureDao.getAll().size();
 
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        assertEquals(beforeCount, afterCount);
+        assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
     }
 
     // UPDATE  procedure - 400 ERROR "pet not assigned to this procedure"
@@ -230,9 +231,9 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
                 .exchange(URI + "/{petId}/procedure/{procedureId}", HttpMethod.PUT, request, ExceptionDto.class, 101, 102);
         int afterCount = procedureDao.getAll().size();
 
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not assigned to this procedure"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        assertEquals(beforeCount, afterCount);
+        assertEquals(response.getBody(), new ExceptionDto("pet not assigned to this procedure"));
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
     }
 
     // UPDATE  procedure - 400 ERROR "procedureId in path and in body not equals"
@@ -245,9 +246,9 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
                 .exchange(URI + "/{petId}/procedure/{procedureId}", HttpMethod.PUT, request, ExceptionDto.class, 102, 102);
         int afterCount = procedureDao.getAll().size();
 
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("procedureId in path and in body not equals"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        assertEquals(beforeCount, afterCount);
+        assertEquals(response.getBody(), new ExceptionDto("procedureId in path and in body not equals"));
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
     }
 
     // DELETE procedure - 200 SUCCESS
@@ -260,9 +261,9 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
         int afterCount = procedureDao.getAll().size();
         Procedure procedure = procedureDao.getByKey(102L);
 
-        Assert.assertNull(procedure);
-        Assert.assertEquals(--beforeCount, afterCount);
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.OK);
+        assertNull(procedure);
+        assertEquals(--beforeCount, afterCount);
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
     }
 
     // DELETE procedure - 404 ERROR "pet not found"
@@ -275,10 +276,10 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
         int afterCount = procedureDao.getAll().size();
         Procedure procedure = procedureDao.getByKey(102L);
 
-        Assert.assertNotNull(procedure);
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not found"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
+        assertNotNull(procedure);
+        assertEquals(beforeCount, afterCount);
+        assertEquals(response.getBody(), new ExceptionDto("pet not found"));
+        assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
     }
 
     // DELETE procedure - 404 ERROR "procedure not found"
@@ -290,9 +291,9 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
                 HttpMethod.DELETE, new HttpEntity<>(HEADERS), ExceptionDto.class, 102, 33);
         int afterCount = procedureDao.getAll().size();
 
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("procedure not found"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
+        assertEquals(beforeCount, afterCount);
+        assertEquals(response.getBody(), new ExceptionDto("procedure not found"));
+        assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
     }
 
     // DELETE procedure - 400 ERROR "pet not yours"
@@ -305,10 +306,10 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
         int afterCount = procedureDao.getAll().size();
         Procedure procedure = procedureDao.getByKey(100L);
 
-        Assert.assertNotNull(procedure);
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        assertNotNull(procedure);
+        assertEquals(beforeCount, afterCount);
+        assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
     }
 
     // DELETE procedure - 400 ERROR "pet not assigned to this procedure"
@@ -321,9 +322,9 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
         int afterCount = procedureDao.getAll().size();
         Procedure procedure = procedureDao.getByKey(102L);
 
-        Assert.assertNotNull(procedure);
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not assigned to this procedure"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        assertNotNull(procedure);
+        assertEquals(beforeCount, afterCount);
+        assertEquals(response.getBody(), new ExceptionDto("pet not assigned to this procedure"));
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
     }
 }
