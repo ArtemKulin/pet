@@ -138,6 +138,29 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M5</version>
             </plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.3.1</version>
+                <configuration>
+                    <allowInsecureRegistries>true</allowInsecureRegistries>
+                    <to>
+                        <image>registry.hub.docker.com/tmqqq/${project.name}:${project.version}</image>
+                    </to>
+                    <container>
+                        <mainClass>com.vet24.web.PetClinicApplication</mainClass>
+                    </container>
+                    <containerizingMode>packaged</containerizingMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 

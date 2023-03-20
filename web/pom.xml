@@ -53,8 +53,8 @@
                     <execution>
                         <id>pre-integration-test</id>
                         <goals>
-                            <goal>start</goal>
                             <goal>stop</goal>
+                            <goal>start</goal>
                         </goals>
                     </execution>
                     <execution>
@@ -76,7 +76,7 @@
                         </goals>
                         <configuration>
                             <outputFileName>openapi.yaml</outputFileName>
-                            <outputDir>${project.build}/openapi</outputDir>
+                            <outputDir>${project.build.outputDirectory}/openapi</outputDir>
                             <apiDocsUrl>http://localhost:8060/v3/api-docs</apiDocsUrl>
                         </configuration>
                     </execution>
