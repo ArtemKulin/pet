@@ -37,8 +37,3 @@ services:
       - PGDATA=/var/lib/postgresql/data/test_pets
     ports:
     - "5434:5432"
-  jenkins:
-    container_name: jenkins
-    image: jenkins/jenkins:lts
-    ports:
-      - "8080:8080"
